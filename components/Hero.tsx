@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useRef, useState } from "react";
-import Image from "next/image";
+import CarVisual from "@/components/CarVisual";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { ChevronDown, Zap, Activity, Compass, Wind } from "lucide-react";
@@ -383,14 +383,7 @@ export default function Hero() {
               {/* Dynamic Thruster Flare */}
               <div className="absolute -left-4 top-1/2 -translate-y-1/2 w-8 h-12 bg-neon-cyan/40 rounded-full blur-md animate-pulse pointer-events-none" />
               
-              <Image
-                src="/car-top-view.svg"
-                alt="Kinetic Prototype Aero Hypercar - Top Down View"
-                width={420}
-                height={180}
-                className="w-full h-auto object-contain filter drop-shadow-lg"
-                priority
-              />
+              <CarVisual className="w-full h-auto object-contain filter drop-shadow-lg" />
             </div>
           </div>
 
