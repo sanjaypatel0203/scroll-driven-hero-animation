@@ -6,19 +6,16 @@ import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { ChevronDown, Zap, Activity, Compass, Wind } from "lucide-react";
 
-// Register ScrollTrigger plugin safely on client
 if (typeof window !== "undefined") {
   gsap.registerPlugin(ScrollTrigger);
 }
 
-// Letter sequence inspired by reference "W E L C O M E   I T Z   F I Z Z"
 const HEADLINE_WORDS = [
   { word: "WELCOME", highlight: false },
   { word: "ITZ", highlight: true },
   { word: "FIZZ", highlight: true },
 ];
 
-// Telemetry Metric Statistics
 const METRICS_DATA = [
   {
     id: "metric-1",
@@ -72,22 +69,17 @@ export default function Hero() {
   const scrollPromptRef = useRef<HTMLDivElement>(null);
   const headerMetaRef = useRef<HTMLDivElement>(null);
 
-  // Live telemetry status displayed during user scroll
-  const [telemetryState, setTelemetryState] = useState({
+   const [telemetryState, setTelemetryState] = useState({
     velocityKmH: 0,
     progressPercent: 0,
     aeroLoadKg: 120,
   });
 
   useEffect(() => {
-    // Check if user prefers reduced motion
     const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
-    // Use GSAP context for automatic cleanup on unmount
     const ctx = gsap.context(() => {
-      // ---------------------------------------------------------
-      // STAGE 4: Initial Load Animations (Page Entrance)
-      // ---------------------------------------------------------
+   
       const introTl = gsap.timeline({ defaults: { ease: "power3.out" } });
 
       introTl
@@ -128,7 +120,7 @@ export default function Hero() {
         );
 
       if (prefersReducedMotion) {
-        // If reduced motion is preferred, show all letters & metrics statically without pinning
+     
         const allLetters = gsap.utils.toArray<HTMLElement>(".kinetic-letter");
         const allMetrics = gsap.utils.toArray<HTMLElement>(".metric-card");
         gsap.set(allLetters, { opacity: 1 });
@@ -136,17 +128,11 @@ export default function Hero() {
         gsap.set(trailRef.current, { width: "100%" });
         return;
       }
-
-      // ---------------------------------------------------------
-      // STAGE 5: Main ScrollTrigger Animation (Scroll-Driven Core)
-      // ---------------------------------------------------------
       const letters = gsap.utils.toArray<HTMLElement>(".kinetic-letter");
       const metricCards = gsap.utils.toArray<HTMLElement>(".metric-card");
 
-      // Initial state: hide metric cards initially
       gsap.set(metricCards, { opacity: 0, scale: 0.85, y: 15 });
 
-      // Create responsive matchMedia listener to handle mobile vs desktop travel bounds
       const mm = gsap.matchMedia();
 
       mm.add(
@@ -165,44 +151,40 @@ export default function Hero() {
           const calculateBounds = () => {
             const roadWidth = roadRef.current ? roadRef.current.clientWidth : window.innerWidth;
             const carWidth = carRef.current ? carRef.current.clientWidth : 200;
-            // Car travel end position: drives smoothly from 0 across the entire road width
+          
             const maxTravel = Math.max(roadWidth - carWidth, 250);
             return { roadWidth, carWidth, maxTravel };
           };
 
           const bounds = calculateBounds();
 
-          // Main ScrollTrigger Timeline pinned to container
           const scrollTl = gsap.timeline({
             scrollTrigger: {
               trigger: containerRef.current,
               start: "top top",
-              end: "+=220%", // Scroll distance driving the animation
+              end: "+=220%", 
               pin: trackRef.current,
-              scrub: 1.2, // 1.2s smooth scrub interpolation for buttery momentum
+              scrub: 1.2, 
               anticipatePin: 1,
               onUpdate: (self) => {
-                // Update live telemetry HUD stats based on scroll progress
+               
                 const progress = self.progress;
-                const speed = Math.round(progress * 342); // 0 to 342 km/h top speed
-                const aero = Math.round(120 + progress * 580); // 120kg to 700kg aero downforce
+                const speed = Math.round(progress * 342);
+                const aero = Math.round(120 + progress * 580); 
                 setTelemetryState({
                   velocityKmH: speed,
                   progressPercent: Math.round(progress * 100),
                   aeroLoadKg: aero,
                 });
 
-                // Calculate car's current position to dynamically reveal letters
                 if (carRef.current && roadRef.current) {
                   const carCurrentX = gsap.getProperty(carRef.current, "x") as number;
                   const carFrontNoseX = carCurrentX + (carRef.current.clientWidth * 0.85);
 
-                  // Update neon trail width behind the car
                   if (trailRef.current) {
                     gsap.set(trailRef.current, { width: Math.max(0, carCurrentX + 30) });
                   }
 
-                  // Reveal each letter as the car's headlights/body sweep past it
                   letters.forEach((letter) => {
                     const letterOffsetLeft = letter.offsetLeft;
                     if (carFrontNoseX >= letterOffsetLeft) {
@@ -216,14 +198,11 @@ export default function Hero() {
             },
           });
 
-          // 1. Move car across road
           scrollTl.to(carRef.current, {
             x: bounds.maxTravel,
             ease: "none",
           });
 
-          // 2. Stagger in metric cards at calibrated scroll progress timestamps
-          // Metric 1: 15% - 35%
           scrollTl.to(
             metricCards[0],
             {
@@ -236,7 +215,6 @@ export default function Hero() {
             0.15
           );
 
-          // Metric 2: 38% - 58%
           scrollTl.to(
             metricCards[1],
             {
@@ -249,7 +227,6 @@ export default function Hero() {
             0.38
           );
 
-          // Metric 3: 60% - 80%
           scrollTl.to(
             metricCards[2],
             {
@@ -262,7 +239,6 @@ export default function Hero() {
             0.6
           );
 
-          // Metric 4: 80% - 98%
           scrollTl.to(
             metricCards[3],
             {
@@ -278,7 +254,7 @@ export default function Hero() {
       );
     }, containerRef);
 
-    return () => ctx.revert(); // GSAP context reverts all ScrollTriggers & tweens cleanly
+    return () => ctx.revert(); 
   }, []);
 
   return (
